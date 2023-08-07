@@ -1,0 +1,36 @@
+﻿@page "/create-user"
+@using AppData.Models;
+@using AppView.Services;
+@inject NavigationManager NavigationManager
+@inject IAPIService aPIService
+<div class="container">
+    <PageTitle>Create a new user</PageTitle>
+
+    <h3>Update @User.Name</h3>
+
+    <div class="mb-3">
+        <label for="name" class="form-label">Name</label>
+        <input type="text" class="form-control" id="name" @bind="User.Name">
+    </div>
+
+    <div class="mb-3">
+        <label for="age" class="form-label">Age</label>
+        <input type="number" class="form-control" id="age" @bind="User.Age">
+    </div>
+
+    <div class="mb-3">
+        <button type="button" class="btn btn-primary" @onclick="Create">Save</button>
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public string Id { get; set; } //Không để được kiểu Guid
+    public Userr User = new Userr(); // Nhận thông tin người dùng cần cập nhật
+    private async Task Create()
+    {
+        User.Id = Guid.NewGuid();
+        var result = await aPIService.AddUser(User);
+    }
+}
+

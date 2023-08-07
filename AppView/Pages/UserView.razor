@@ -1,0 +1,60 @@
+﻿@page "/userview"
+@using AppData.Models;
+@using AppView.Services;
+@inject NavigationManager NavigationManager
+
+<h3>User View</h3>
+
+@if (userrs != null)
+{
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Age</th>
+                    <th>Chức năng</th>
+                </tr>
+            </thead>
+            <tbody>
+            @foreach (var user in userrs)
+            {
+                        <tr>
+                            <td>@user.Name</td>
+                            <td>@user.Age</td>
+                            <td>
+                                <button class="btn btn-outline-success"@onclick="(()=>ShowUser(user.Id))"> Cập nhật <i class="oi oi-pen"></i> </button> 
+                                <button class="btn btn-outline-danger"@onclick="(()=>DeleteUser(user.Id))"> Xóa <i class="oi oi-pen"></i> </button> 
+                             </td>
+                        </tr>
+            }
+            </tbody>
+        </table>
+}
+else
+{
+        <p>Loading...</p>
+}
+
+
+@code {
+    private List<Userr> userrs;
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        // Gọi đến phương thức GetUserrs() trong dịch vụ IAPIService để lấy danh sách dữ liệu
+        userrs = await aPIService.GetUserrs();
+    }
+    void ShowUser(Guid id)
+    {
+        NavigationManager.NavigateTo($"/update-user/{id}");
+    }
+    private async Task DeleteUser(Guid id)
+    {
+        var result = await aPIService.DeleteUser(id);
+        userrs = await aPIService.GetUserrs();
+    }
+
+    [Inject]
+    private IAPIService aPIService { get; set; }
+}

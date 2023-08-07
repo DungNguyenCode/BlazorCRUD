@@ -1,0 +1,54 @@
+﻿@page "/update-user/{id}"
+
+@using AppData.Models
+@using AppView.Services
+@using Microsoft.AspNetCore.Components
+@inject IAPIService aPIService
+
+<div class="container">
+    <PageTitle>@User.Name</PageTitle>
+
+    <h3>Update @User.Name</h3>
+
+    <div class="mb-3">
+        <label for="name" class="form-label">Name</label>
+        <input type="text" class="form-control" id="name" @bind="User.Name">
+    </div>
+
+    <div class="mb-3">
+        <label for="age" class="form-label">Age</label>
+        <input type="number" class="form-control" id="age" @bind="User.Age">
+    </div>
+
+    <div class="mb-3">
+        <button type="button" class="btn btn-primary" @onclick="Update">Save</button>
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public string Id { get; set; } //Không để được kiểu Guid
+    public Userr User = new Userr(); // Nhận thông tin người dùng cần cập nhật
+
+    protected override async Task OnParametersSetAsync()
+    {
+        if (Guid.Parse(Id) != Guid.Empty)
+        {
+            User = await aPIService.GetSingleUser(Guid.Parse(Id));
+
+        }
+    }
+    private async Task Update()
+    {
+        // Gọi API để cập nhật thông tin người dùng
+        var result = await aPIService.UpdateUser(User);
+        await aPIService.GetUserrs();
+
+        // Chuyển hướng trực tiếp về trang UserView
+        NavigationManager.NavigateTo("/userview");
+
+    }
+
+    [Inject]
+    private NavigationManager NavigationManager { get; set; }
+}

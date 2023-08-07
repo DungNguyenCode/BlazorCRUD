@@ -41,7 +41,7 @@
     private async Task Update()
     {
         // Gọi API để cập nhật thông tin người dùng
-        var result = await aPIService.UpdateUser(User);
+        await aPIService.UpdateUser(User);
         await aPIService.GetUserrs();
 
         // Chuyển hướng trực tiếp về trang UserView
